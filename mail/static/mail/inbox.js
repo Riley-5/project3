@@ -18,6 +18,7 @@ function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#indiv-email').style.display = 'none';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -59,6 +60,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#indiv-email').style.display = 'none';
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -74,15 +76,29 @@ function load_mailbox(mailbox) {
     emails.forEach(function(email) {
       const element = document.createElement('div');
       element.style.border = 'solid 1pt #000000';
+      // If email has been read then make background white else make background grey
       if (email.read === false) {
         element.style.background = 'white';
       } else {
         element.style.background = 'grey';
       }
-      element.innerHTML = `${email.sender} ${email.subject} ${email.timestamp}`; // Need to apply styling
+      element.innerHTML = `${email.sender} ${email.subject} ${email.timestamp}`; // Apply styling
+      // When emial is clicked
       element.addEventListener('click', function() {
-        // Change when neccessary
-        console.log(`This element with subject ${email.subject} has been clicked`)
+        console.log(`This ${email.subject} has been clicked`)
+        // Update what divs are showing. Only show div indiv_email
+        document.querySelector('#emails-view').style.display = 'none';
+        document.querySelector('#compose-view').style.dsiplay = 'none';
+        document.querySelector('#indiv-email').style.display = 'block';
+        // Show email sender, recipients, subject, timestamp and body
+        
+        // Mark email as read
+        fetch(`/emails/${email.id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            read: true
+          })
+        })
       });
       document.querySelector('#emails-view').append(element);
     });
