@@ -43,12 +43,14 @@ function send_email() {
   .then(response => response.json())
   .then(result => {
     console.log(result);
+    console.log(recipients, subject, body);
     // Load user's sent mailbox
     load_mailbox('sent');
   })
   .catch((error) => {
     console.log('Error:', error);
   });
+  // Prevent default submission
   return false;
 }
 
@@ -60,4 +62,29 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  // Get latest emails in mailbox
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(emails => {
+    // Print emails
+    console.log(emails);
+
+    // Put each email in a div for sent mailbox
+    emails.forEach(function(email) {
+      const element = document.createElement('div');
+      element.style.border = 'solid 1pt #000000';
+      if (email.read === false) {
+        element.style.background = 'white';
+      } else {
+        element.style.background = 'grey';
+      }
+      element.innerHTML = `${email.sender} ${email.subject} ${email.timestamp}`; // Need to apply styling
+      element.addEventListener('click', function() {
+        // Change when neccessary
+        console.log(`This element with subject ${email.subject} has been clicked`)
+      });
+      document.querySelector('#emails-view').append(element);
+    });
+  });
 }
