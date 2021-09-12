@@ -83,7 +83,7 @@ function load_mailbox(mailbox) {
         element.style.background = 'grey';
       }
       element.innerHTML = `${email.sender} ${email.subject} ${email.timestamp}`; // Apply styling
-      // When emial is clicked
+      // When email is clicked
       element.addEventListener('click', function() {
         console.log(`This ${email.subject} has been clicked`)
         // Update what divs are showing. Only show div indiv_email
@@ -91,7 +91,9 @@ function load_mailbox(mailbox) {
         document.querySelector('#compose-view').style.dsiplay = 'none';
         document.querySelector('#indiv-email').style.display = 'block';
         // Show email sender, recipients, subject, timestamp and body
-        
+        const indiv_email = document.createElement('div');
+        indiv_email.innerHTML = `${email.sender} ${email.recipients} ${email.subject} ${email.timestamp} ${email.body}`;
+        document.querySelector('#indiv-email').append(indiv_email); //remove append from div
         // Mark email as read
         fetch(`/emails/${email.id}`, {
           method: 'PUT',
@@ -100,6 +102,7 @@ function load_mailbox(mailbox) {
           })
         })
       });
+      document.querySelector('#indiv-email').innerHTML = '';
       document.querySelector('#emails-view').append(element);
     });
   });
