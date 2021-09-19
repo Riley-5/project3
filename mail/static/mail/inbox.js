@@ -85,7 +85,7 @@ function load_mailbox(mailbox) {
       element.innerHTML = `${email.sender} ${email.subject} ${email.timestamp}`; // Apply styling
       // When email is clicked
       element.addEventListener('click', function() {
-        console.log(`This ${email.subject} has been clicked`)
+        console.log(`This ${email.subject} has been clicked`);
         // Update what divs are showing. Only show div indiv_email
         document.querySelector('#emails-view').style.display = 'none';
         document.querySelector('#compose-view').style.dsiplay = 'none';
@@ -93,7 +93,7 @@ function load_mailbox(mailbox) {
         // Show email sender, recipients, subject, timestamp and body
         const indiv_email = document.createElement('div');
         indiv_email.innerHTML = `${email.sender} ${email.recipients} ${email.subject} ${email.timestamp} ${email.body}`;
-        document.querySelector('#indiv-email').append(indiv_email); //remove append from div
+        document.querySelector('#indiv-email').append(indiv_email);
         // Mark email as read
         fetch(`/emails/${email.id}`, {
           method: 'PUT',
@@ -101,6 +101,50 @@ function load_mailbox(mailbox) {
             read: true
           })
         })
+
+        // If email is from inbox mailbox add archive button
+        if (mailbox === 'inbox') {
+          // Add archive button
+          const archive_button = document.createElement('button');
+          archive_button.innerHTML = 'Archive';
+          archive_button.type = 'submit';
+          archive_button.id = 'btnArchive';
+          indiv_email.innerHTML = `${email.sender} ${email.recipients} ${email.subject} ${email.timestamp} ${email.body}`;
+          document.querySelector('#indiv-email').append(indiv_email, archive_button);
+          // If archive button clicked remove email from inbox add it to archived emails
+          function archive() {
+            fetch(`/emails/${email.id}`, {
+              method: 'PUT',
+              body: JSON.stringify({
+                archived: true
+              })
+            })
+            load_mailbox('inbox');
+          }
+
+          document.querySelector('#btnArchive').onclick = archive;
+        }
+        else if (mailbox === 'archive') {
+          // Add unarchive button
+          const unarchive_button = document.createElement('button');
+          unarchive_button.innerHTML = 'Unarchive';
+          unarchive_button.type = 'submit';
+          unarchive_button.id = 'btnUnarchive';
+          indiv_email.innerHTML = `${email.sender} ${email.recipients} ${email.subject} ${email.timestamp} ${email.body}`;
+          document.querySelector('#indiv-email').append(indiv_email, unarchive_button);
+          // If archive button clicked remove email from inbox add it to archived emails
+          function unarchive() {
+            fetch(`/emails/${email.id}`, {
+              method: 'PUT',
+              body: JSON.stringify({
+                archived: false
+              })
+            })
+            load_mailbox('inbox');
+          }
+
+          document.querySelector('#btnUnarchive').onclick = unarchive;
+        }
       });
       document.querySelector('#indiv-email').innerHTML = '';
       document.querySelector('#emails-view').append(element);
