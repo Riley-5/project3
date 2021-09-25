@@ -1,3 +1,32 @@
 textarea {
     min-height: 400px;
 }
+
+#email-sender {
+    float: left;
+    font-weight: bold;
+    width: 200px;
+    padding-left: 10px;
+    border-left: solid 1pt black;
+    border-top: solid 1pt black;
+    border-bottom: solid 1pt black;
+    
+}
+
+#email-subject {
+    float: left;
+    width: 500px;   
+    border-top: solid 1pt black;
+    border-bottom: solid 1pt black;
+}
+
+#email-timestamp {
+    float: left;
+    text-align: right;
+    width: 350px;
+    padding-right: 10px;
+    border-right: solid 1pt black;
+    border-top: solid 1pt black;
+    border-bottom: solid 1pt black;
+    color: grey;
+}

@@ -75,14 +75,15 @@ function load_mailbox(mailbox) {
     // Put each email in a div for sent mailbox
     emails.forEach(function(email) {
       const element = document.createElement('div');
-      element.style.border = 'solid 1pt #000000';
+      element.id = '#element-email';
       // If email has been read then make background white else make background grey
       if (email.read === false) {
         element.style.background = 'white';
       } else {
         element.style.background = 'grey';
       }
-      element.innerHTML = `${email.sender} ${email.subject} ${email.timestamp}`; // Apply styling
+
+      element.innerHTML = `<div id="email-sender">${email.sender}</div> <div id="email-subject">${email.subject}</div> <div id="email-timestamp">${email.timestamp}</div>`;
       // When email is clicked
       element.addEventListener('click', function() {
         console.log(`This ${email.subject} has been clicked`);
@@ -92,7 +93,12 @@ function load_mailbox(mailbox) {
         document.querySelector('#indiv-email').style.display = 'block';
         // Show email sender, recipients, subject, timestamp and body
         const indiv_email = document.createElement('div');
-        indiv_email.innerHTML = `${email.sender} ${email.recipients} ${email.subject} ${email.timestamp} ${email.body}`;
+        indiv_email.innerHTML = `<div id="indiv-from"><b>From:</b> ${email.sender}</div> 
+        <div id="indiv-to"><b>To:</b> ${email.recipients}</div> 
+        <div id="indiv-subject"><b>Subject:</b> ${email.subject}</div> 
+        <div id="indiv-timestamp"><b>Timestamp:</b> ${email.timestamp}</div> 
+        <hr/> 
+        <div id="indiv-body">${email.body}</div>`;
         document.querySelector('#indiv-email').append(indiv_email);
         // Mark email as read
         fetch(`/emails/${email.id}`, {
