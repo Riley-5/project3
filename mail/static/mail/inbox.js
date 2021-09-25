@@ -102,6 +102,34 @@ function load_mailbox(mailbox) {
           })
         })
 
+        // Add reply buttton
+        const reply_button = document.createElement('button');
+        reply_button.innerHTML = 'Reply';
+        reply_button.type = 'submit';
+        reply_button.id = 'btnReply';
+        document.querySelector('#indiv-email').append(reply_button);
+        document.querySelector('#btnReply').onclick = function() {
+          fetch(`/emails/${email.id}`)
+          .then(response => response.json())
+          .then(email => {
+            console.log(email);
+            document.querySelector('#compose-recipients').value = email.sender;
+            if (email.subject.startsWith('Re:')) {
+              document.querySelector('#compose-subject').value = email.subject;
+            }
+            else {
+              document.querySelector('#compose-subject').value = `Re: ${email.subject}`;
+            }
+            if (email.body.startsWith('On')) {
+              document.querySelector('#compose-body').value = email.body;
+            }
+            else {
+              document.querySelector('#compose-body').value = `On ${email.timestamp} ${email.sender} wrote: ${email.body}`;
+            }
+          });
+          compose_email();
+        }
+
         // If email is from inbox mailbox add archive button
         if (mailbox === 'inbox') {
           // Add archive button
@@ -109,8 +137,7 @@ function load_mailbox(mailbox) {
           archive_button.innerHTML = 'Archive';
           archive_button.type = 'submit';
           archive_button.id = 'btnArchive';
-          indiv_email.innerHTML = `${email.sender} ${email.recipients} ${email.subject} ${email.timestamp} ${email.body}`;
-          document.querySelector('#indiv-email').append(indiv_email, archive_button);
+          document.querySelector('#indiv-email').append(archive_button);
           // If archive button clicked remove email from inbox add it to archived emails
           function archive() {
             fetch(`/emails/${email.id}`, {
@@ -130,8 +157,7 @@ function load_mailbox(mailbox) {
           unarchive_button.innerHTML = 'Unarchive';
           unarchive_button.type = 'submit';
           unarchive_button.id = 'btnUnarchive';
-          indiv_email.innerHTML = `${email.sender} ${email.recipients} ${email.subject} ${email.timestamp} ${email.body}`;
-          document.querySelector('#indiv-email').append(indiv_email, unarchive_button);
+          document.querySelector('#indiv-email').append(unarchive_button);
           // If archive button clicked remove email from inbox add it to archived emails
           function unarchive() {
             fetch(`/emails/${email.id}`, {
