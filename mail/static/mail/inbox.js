@@ -76,14 +76,16 @@ function load_mailbox(mailbox) {
     emails.forEach(function(email) {
       const element = document.createElement('div');
       element.id = '#element-email';
+
+      element.style.border = '1px solid black';
+      
+      element.innerHTML = `<span id="email-sender">${email.sender}</span><span id="email-subject">${email.subject}</span>${email.timestamp}`;
+
       // If email has been read then make background white else make background grey
-      if (email.read === false) {
-        element.style.background = 'white';
-      } else {
-        element.style.background = 'grey';
+      if (email.read === true) {
+        element.classList.add('email-read');
       }
 
-      element.innerHTML = `<div id="email-sender">${email.sender}</div> <div id="email-subject">${email.subject}</div> <div id="email-timestamp">${email.timestamp}</div>`;
       // When email is clicked
       element.addEventListener('click', function() {
         console.log(`This ${email.subject} has been clicked`);
@@ -100,6 +102,7 @@ function load_mailbox(mailbox) {
         <hr/> 
         <div id="indiv-body">${email.body}</div>`;
         document.querySelector('#indiv-email').append(indiv_email);
+
         // Mark email as read
         fetch(`/emails/${email.id}`, {
           method: 'PUT',
